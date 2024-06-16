@@ -960,8 +960,8 @@ def train_generator(helper, generator_lr, train_data, output_name):
     init_generator_path = './saved_models/' + output_name + '/init_generator.pth'
 
     
-    for alpha in [0, 0.25, 0.5, 0.75, 1]:
-        logger.info('alpha: {}'.format(alpha))
+    for lamda in [0, 0.25, 0.5, 0.75, 1]:
+        logger.info('lamda: {}'.format(lamda))
         helper.generator.load_state_dict(torch.load(init_generator_path))
         
         losses_lf = []  
@@ -1008,7 +1008,7 @@ def train_generator(helper, generator_lr, train_data, output_name):
                     scalar_ld = torch.log10(l_d+1)
                     scalar_lf = torch.log10(l_f+1)
                     scalar_kld = torch.log10(kld_loss+1)
-                    loss_generator = scalar_kld - (1-alpha)*scalar_ld - alpha*scalar_lf 
+                    loss_generator = scalar_kld - (1-lamda)*scalar_ld - lamda*scalar_lf 
                     if i % 100 == 1:
                         logger.info("Normalize: l_f: {:.4f}, l_d: {:.4f}, kld_loss: {:.4f}, s_l_f: {:.4f}, s_l_d: {:.4f}, s_kld_loss: {:.4f}".format(l_f.item(),l_d.item(),kld_loss.item(),scalar_lf.item(),scalar_ld.item(),scalar_kld.item()))
                     
@@ -1026,10 +1026,10 @@ def train_generator(helper, generator_lr, train_data, output_name):
             logger.info(
                 'Epoch {}, Generator loss: {:.4f}, l_f: {:.4f}, l_d: {:.4f}, recons_loss: {:.4f}, kld_loss: {:.4f}'
                 .format(epoch, loss_generator.item(), l_f.item(), l_d.item(), recons_loss.item(), kld_loss.item()))
-            torch.save(helper.generator.state_dict(), './saved_models/' + output_name + '/generator_alpha_' + str(alpha) + '_epoch_' + str(epoch) + '.pth')
+            torch.save(helper.generator.state_dict(), './saved_models/' + output_name + '/generator_lamda_' + str(lamda) + '_epoch_' + str(epoch) + '.pth')
         
         logger.info('--------------------')
-        logger.info("This turn's alpha is : {}".format(alpha))
+        logger.info("This turn's lamda is : {}".format(lamda))
         
 
 
